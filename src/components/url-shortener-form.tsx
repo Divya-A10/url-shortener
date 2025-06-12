@@ -1,12 +1,13 @@
+
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { createShortUrlAction, type CreateShortUrlState } from '@/app/actions';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useActionState } from 'react';
 import { Copy, Check, ExternalLink } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
@@ -22,7 +23,7 @@ function SubmitButton() {
 
 export function UrlShortenerForm() {
   const initialState: CreateShortUrlState = {};
-  const [state, formAction] = useFormState(createShortUrlAction, initialState);
+  const [state, formAction] = useActionState(createShortUrlAction, initialState);
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
