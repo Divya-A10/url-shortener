@@ -32,7 +32,15 @@ export function UrlShortenerForm() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setOriginUrl(window.location.origin);
+      try {
+        // Robustly get the true origin (scheme://hostname:port)
+        const currentTrueOrigin = new URL(window.location.href).origin;
+        setOriginUrl(currentTrueOrigin);
+      } catch (e) {
+        // Fallback if new URL parsing fails (highly unlikely with window.location.href)
+        console.error("Error parsing window.location.href to get origin: ", e);
+        setOriginUrl(window.location.origin); 
+      }
     }
   }, []);
 
