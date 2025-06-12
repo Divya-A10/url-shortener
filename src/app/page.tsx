@@ -11,11 +11,11 @@ export default function HomePage() {
           <Link href="/" className="inline-flex items-center gap-2 group">
             <Zap className="h-10 w-10 sm:h-12 sm:w-12 text-primary transition-transform duration-300 group-hover:scale-110" />
             <h1 className="text-4xl sm:text-5xl font-headline font-bold text-primary transition-colors duration-300 group-hover:text-primary/80">
-              Link Pastel
+              LINK SHORTENER
             </h1>
           </Link>
           <p className="text-muted-foreground mt-2 text-md sm:text-lg">
-            Shorten your long URLs with a touch of pastel elegance.
+            Shorten your long URLs
           </p>
         </header>
 
