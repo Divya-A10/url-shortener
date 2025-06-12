@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -17,6 +18,7 @@ export interface CreateShortUrlState {
   shortCode?: string;
   error?: string;
   longUrl?: string; // To display original URL alongside the new short one
+  wasExisting?: boolean; // To indicate if the short code was pre-existing
 }
 
 export async function createShortUrlAction(
@@ -39,7 +41,7 @@ export async function createShortUrlAction(
     // 1. Check if this long URL already has a short code
     const existingShortCodeForLongUrl = await getShortCodeByLongUrl(longUrl);
     if (existingShortCodeForLongUrl) {
-      return { shortCode: existingShortCodeForLongUrl, longUrl };
+      return { shortCode: existingShortCodeForLongUrl, longUrl, wasExisting: true };
     }
 
     // 2. Generate a new short code (deterministically based on longUrl)
@@ -66,7 +68,7 @@ export async function createShortUrlAction(
     
     revalidatePath('/');
 
-    return { shortCode: newShortCode, longUrl };
+    return { shortCode: newShortCode, longUrl, wasExisting: false };
 
   } catch (e) {
     console.error("Error in createShortUrlAction:", e);
@@ -74,3 +76,4 @@ export async function createShortUrlAction(
     return { error: `Server error: ${errorMessage}` };
   }
 }
+

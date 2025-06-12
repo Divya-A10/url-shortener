@@ -33,11 +33,9 @@ export function UrlShortenerForm() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        // Robustly get the true origin (scheme://hostname:port)
         const currentTrueOrigin = new URL(window.location.href).origin;
         setOriginUrl(currentTrueOrigin);
       } catch (e) {
-        // Fallback if new URL parsing fails (highly unlikely with window.location.href)
         console.error("Error parsing window.location.href to get origin: ", e);
         setOriginUrl(window.location.origin); 
       }
@@ -47,13 +45,20 @@ export function UrlShortenerForm() {
   useEffect(() => {
     if (state.shortCode && state.longUrl && originUrl) {
       setShortenedUrl(`${originUrl}/${state.shortCode}`);
-       if (!state.error && formRef.current) {
-         // formRef.current.reset(); // Uncomment to reset form fields on successful new shortlink creation
-       }
+      if (state.error === undefined) { // Only toast on success
+        if (state.wasExisting) {
+          toast({ title: "Existing Link Found!", description: "This URL was already shortened. Here's your link!" });
+        } else {
+          toast({ title: "Link Shortened!", description: "Your new short link is ready." });
+        }
+      }
+      //  if (!state.error && formRef.current && state.wasExisting === false) { // Optional: Reset form only for new links
+      //    formRef.current.reset(); 
+      //  }
     } else if (!state.shortCode) { 
         setShortenedUrl(null);
     }
-  }, [state, originUrl]);
+  }, [state, originUrl, toast]);
 
   const handleCopy = () => {
     if (shortenedUrl) {
@@ -116,3 +121,4 @@ export function UrlShortenerForm() {
     </Card>
   );
 }
+
