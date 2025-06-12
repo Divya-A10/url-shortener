@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { useEffect, useState, useRef, useActionState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useActionState } from 'react'; // Corrected import
 import { Copy, Check, ExternalLink } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
@@ -33,9 +34,11 @@ export function UrlShortenerForm() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
+        // Use new URL().origin to reliably get the scheme, hostname, and port.
         const currentTrueOrigin = new URL(window.location.href).origin;
         setOriginUrl(currentTrueOrigin);
       } catch (e) {
+        // Fallback for environments where window.location.href might not be a full URL (less likely in browser)
         console.error("Error parsing window.location.href to get origin: ", e);
         setOriginUrl(window.location.origin); 
       }
@@ -99,13 +102,13 @@ export function UrlShortenerForm() {
           <SubmitButton />
         </CardFooter>
       </form>
-      {shortenedUrl && (
+      {shortenedUrl && state.shortCode && (
         <CardContent className="mt-0 pt-0 pb-6 px-6">
           <div className="mt-1 p-4 border border-primary/30 rounded-md bg-primary/10 shadow-sm">
             <p className="text-sm text-primary/80 font-medium">Your shortened URL:</p>
             <div className="flex items-center justify-between gap-2 mt-1">
               <Link href={shortenedUrl} target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline break-all text-lg flex items-center gap-1.5 group">
-                {shortenedUrl.replace(/^https?:\/\//, '')} 
+                {state.shortCode} {/* Display only the short code */}
                 <ExternalLink className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" />
               </Link>
               <Button variant="ghost" size="icon" onClick={handleCopy} aria-label="Copy shortened URL" className="text-primary hover:bg-primary/20">
@@ -113,6 +116,9 @@ export function UrlShortenerForm() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
+              Links to: <code className="bg-secondary p-1 rounded-md text-secondary-foreground font-mono text-xs">{shortenedUrl}</code>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
               Original: <span className="break-all opacity-80">{state.longUrl}</span>
             </p>
           </div>
@@ -121,4 +127,3 @@ export function UrlShortenerForm() {
     </Card>
   );
 }
-
